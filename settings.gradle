@@ -1,0 +1,3 @@
+rootProject.name = 'Selenium_Framework'
+include 'sf_core'
+include 'sf_tests'

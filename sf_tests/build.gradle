@@ -1,0 +1,4 @@
+dependencies {
+    compile project(':sf_core')
+    testCompile project(':sf_core').sourceSets.test.output
+}
