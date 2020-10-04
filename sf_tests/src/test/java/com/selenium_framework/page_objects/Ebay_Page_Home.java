@@ -50,7 +50,7 @@ public class Ebay_Page_Home extends BasePageObjects {
     public void writeInTxtSearch(String search) throws Exception {
         txt_Search.clear();
         txt_Search.sendKeys(search);
-        getExtentTest().pass("Se ingresa los datos correctamente.", takeScreenshot(id, "ebayTxtSearch", false));
+        getExtentTest().pass("Se ingresa los datos correctamente. " + search, takeScreenshot(id, "ebayTxtSearch", false));
     }
 
     public void selectCategory(String category) throws Exception {

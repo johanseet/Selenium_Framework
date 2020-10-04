@@ -32,6 +32,7 @@ public class Search {
     }
 
     public void setTestcase(String testcase) {
+        logger.error("seteando el id " + testcase + " al id actual " + this.testcase);
         this.testcase = testcase;
     }
 
@@ -69,7 +70,5 @@ public class Search {
         testResultData[1] = getSearch_data();
         testResultData[2] = getCategory();
         testResultData[3] = getState();
-
-        this.testResultData = testResultData;
     }
 }

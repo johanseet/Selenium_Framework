@@ -28,6 +28,7 @@ import org.testng.ITestResult;
 public class ParallelTestsListener extends BaseParallelTests implements ITestListener {
     private Logger logger = LogManager.getLogger(ParallelTestsListener.class);
     private ExtentReports extentReports;
+    private Search search;
 
     @Override
     public void onStart(ITestContext context) {
@@ -36,22 +37,22 @@ public class ParallelTestsListener extends BaseParallelTests implements ITestLis
     @Override
     public void onTestStart(ITestResult result) {
         extentReports = getExtentReports();
+        search = (Search) getTestResultData();
     }
 
     @Override
     public void onTestSuccess(ITestResult result) {
-        ((Search) getTestResultData()).setTestcase("PASS");
-        getExtentTest().pass("marcando pass la prueba");
-        logger.debug("trace");
-        addTestResultData(((Search) getTestResultData()).getTestResultData());
+        search.setState("PASS");
+        search.setTestResultData();
+        addTestResultData(search.getTestResultData());
     }
 
     @Override
     public void onTestFailure(ITestResult result) {
-        ((Search) getTestResultData()).setTestcase("FAIL");
         getExtentTest().fail("La prueba ha fallado, información sobre el error: " + result.getThrowable());
-        logger.debug("trace");
-        addTestResultData(((Search) getTestResultData()).getTestResultData());
+        search.setState("PASS");
+        search.setTestResultData();
+        addTestResultData(search.getTestResultData());
     }
 
     @Override
@@ -61,6 +62,7 @@ public class ParallelTestsListener extends BaseParallelTests implements ITestLis
 
     @Override
     public void onTestFailedButWithinSuccessPercentage(ITestResult result) {
+        logger.debug(Thread.currentThread().getId() + "***********************************");
     }
 
     @Override
@@ -69,7 +71,6 @@ public class ParallelTestsListener extends BaseParallelTests implements ITestLis
 
     @Override
     public void onFinish(ITestContext context) {
-        logger.debug("trace");
         extentReports.flush();
     }
 }

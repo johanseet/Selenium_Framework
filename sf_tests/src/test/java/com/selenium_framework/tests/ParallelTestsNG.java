@@ -17,13 +17,11 @@
 package com.selenium_framework.tests;
 
 import com.selenium_framework.core.BaseParallelTests;
-import com.selenium_framework.core.Report;
 import com.selenium_framework.page_objects.Ebay_Page_Home;
 import com.selenium_framework.test_dto.HeadersResultFile;
 import com.selenium_framework.test_dto.Search;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
 public class ParallelTestsNG extends BaseParallelTests {
@@ -32,7 +30,6 @@ public class ParallelTestsNG extends BaseParallelTests {
     private String testFile_path = "testfile_path";
     private String testFile_sheet = "testfile_sheet";
     private String[] headers = new HeadersResultFile().getHeadersResultFile();
-    private Report report = new Report();
     private static Search search = new Search();
     private Logger logger = LogManager.getLogger(ParallelTestsNG.class);
 
@@ -46,45 +43,49 @@ public class ParallelTestsNG extends BaseParallelTests {
 
     @Test(dataProvider = "data-provider")
     public void pageTest(String id, String search_data, String category) throws Throwable {
-        //Actualiando el titulo del reporte
         try {
+            search = (Search) getTestResultData();
+            logger.debug(Thread.currentThread().getId() + " ***dataprovider testCase = " + id);
+            //Actualiando el titulo del reporte
             getExtentTest().getModel().setName("Test Case " + id);
             Ebay_Page_Home ebay_page_home = new Ebay_Page_Home(getDriver(), id);
             ebay_page_home.goToEbayHomePage();
+            if (id.equals("2")) {
+                getExtentTest().fail("Falla a proposito");
+            }
             ebay_page_home.writeInTxtSearch(search_data);
             ebay_page_home.selectCategory(category);
             ebay_page_home.clickButtonSearch();
-            if (id.equals("2")) {
-                Assert.assertTrue(false);
-                getExtentTest().fail("Falla a proposito");
-            }
-            ((Search) getTestResultData()).setTestcase(id);
-            logger.debug(Thread.currentThread().getId() + " testCase = " + ((Search) getTestResultData()).getTestcase());
-            ((Search) getTestResultData()).setSearch_data(search_data);
-            logger.debug(Thread.currentThread().getId() + " search = " + ((Search) getTestResultData()).getSearch_data());
-            ((Search) getTestResultData()).setCategory(category);
-            logger.debug(Thread.currentThread().getId() + " category = " + ((Search) getTestResultData()).getCategory());
-            ((Search) getTestResultData()).setTestResultData();
+
+            search.setTestcase(id);
+            search.setSearch_data(search_data);
+            search.setCategory(category);
+
         } catch (Throwable t) {
             //throw logger.throwing(t);
         }
     }
 
+/*
+public void pageTest(String[] data) throws Throwable {
+        search = (Search) getTestResultData();
+        loadData(data);
 
-/*    public void pageTest(Object[] data) throws Throwable {
-        //Actualiando el titulo del reporte
-        Search_dto search_dto = new Search_dto(data);
-        logger.debug("THREAD " + Thread.currentThread().getId() + " "+search_dto);
-        logger.debug("THREAD " + Thread.currentThread().getId() + " "+search_dto.getTestCase());
-        logger.debug("THREAD " + Thread.currentThread().getId() + " "+search_dto.getSearch_data());
-        logger.debug("THREAD " + Thread.currentThread().getId() + " "+search_dto.getCategory());
-        getExtentTest().getModel().setName("Test Case " + search_dto.getTestCase());
-
-        Ebay_Page_Home ebay_page_home = new Ebay_Page_Home(getDriver());
+        getExtentTest().getModel().setName("Test Case " + search.getTestcase());
+        Ebay_Page_Home ebay_page_home = new Ebay_Page_Home(getDriver(), search.getTestcase());
         ebay_page_home.goToEbayHomePage();
-       // ebay_page_home.writeInTxtSearch(dto.getSearch_data());
-       // ebay_page_home.selectCategory(dto.getCategory());
-       // ebay_page_home.clickButtonSearch();
-    }*/
+        if (search.getTestcase().equals("2")) {
+            getExtentTest().fail("Falla a proposito");
+        }
+        ebay_page_home.writeInTxtSearch(search.getSearch_data());
+        ebay_page_home.selectCategory(search.getCategory());
+        ebay_page_home.clickButtonSearch();
+    }
 
+    public void loadData(String[] data){
+        search.setTestcase(data[0]);
+        search.setSearch_data(data[1]);
+        search.setCategory(data[2]);
+    }
+*/
 }

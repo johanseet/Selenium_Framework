@@ -42,6 +42,12 @@ public class TestManager {
     private static String browser;
     private static ExtentReports extentReport;
     private final String IEXPLORER = "IEXPLORER";
+    private Logger logger = LogManager.getLogger(TestManager.class);
+
+    protected static TestManager getInstance() {
+        return instance;
+    }
+
     /**
      * ThreadLocal que guarda en hilos el driver y el extentest que se utilizara en cada prueba
      */
@@ -85,12 +91,6 @@ public class TestManager {
         }
 
     });
-
-    private Logger logger = LogManager.getLogger(TestManager.class);
-
-    protected static TestManager getInstance() {
-        return instance;
-    }
 
     /**
      * llamar a este método para obtener el driver del hilo en que se ecnuentra la prueba.

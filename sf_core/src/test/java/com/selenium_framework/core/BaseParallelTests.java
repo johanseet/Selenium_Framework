@@ -135,10 +135,10 @@ public class BaseParallelTests {
      */
     @BeforeMethod
     public void beforeMethod() throws Throwable {
-        TestManager driverManager = new TestManager();
-        driverManager.setDriver(GetPropertyValues.getPropertyValue("config.properties", "driver"));
-        driverManager.setExtentReport(extentReports);
-        driverManager.setTestResultData(testResultData);
+        TestManager testManager = new TestManager();
+        testManager.setDriver(GetPropertyValues.getPropertyValue("config.properties", "driver"));
+        testManager.setExtentReport(extentReports);
+        testManager.setTestResultData(testResultData);
         driver = TestManager.getInstance().getDriver();
         extentTest = TestManager.getInstance().getExtentTest();
     }
@@ -148,7 +148,6 @@ public class BaseParallelTests {
      */
     @AfterMethod
     public void afterMethod() {
-        logger.debug("trace");
         TestManager.getInstance().removeDriver();
     }
 
@@ -157,7 +156,7 @@ public class BaseParallelTests {
      */
     @AfterClass
     public void afterClass() {
-        logger.debug("trace");
+
     }
 
     /**
@@ -165,7 +164,6 @@ public class BaseParallelTests {
      */
     @AfterTest
     public void afterTest() throws Throwable {
-        logger.debug("trace");
         report.writeExcelFileResult(headers, listTestResultData);
     }
 }
