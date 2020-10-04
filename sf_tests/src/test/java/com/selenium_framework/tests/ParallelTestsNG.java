@@ -23,6 +23,7 @@ import com.selenium_framework.test_dto.HeadersResultFile;
 import com.selenium_framework.test_dto.Search;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 public class ParallelTestsNG extends BaseParallelTests {
@@ -32,7 +33,7 @@ public class ParallelTestsNG extends BaseParallelTests {
     private String testFile_sheet = "testfile_sheet";
     private String[] headers = new HeadersResultFile().getHeadersResultFile();
     private Report report = new Report();
-    private Search search = new Search();
+    private static Search search = new Search();
     private Logger logger = LogManager.getLogger(ParallelTestsNG.class);
 
     public ParallelTestsNG() {
@@ -40,6 +41,7 @@ public class ParallelTestsNG extends BaseParallelTests {
         super.testFile_path = testFile_path;
         super.testFile_sheet = testFile_sheet;
         super.headers = headers;
+        testResultData = search;
     }
 
     @Test(dataProvider = "data-provider")
@@ -47,17 +49,24 @@ public class ParallelTestsNG extends BaseParallelTests {
         //Actualiando el titulo del reporte
         try {
             getExtentTest().getModel().setName("Test Case " + id);
-
             Ebay_Page_Home ebay_page_home = new Ebay_Page_Home(getDriver(), id);
             ebay_page_home.goToEbayHomePage();
             ebay_page_home.writeInTxtSearch(search_data);
             ebay_page_home.selectCategory(category);
             ebay_page_home.clickButtonSearch();
-            search.setTestcase(id);
-            search.setSearch_data(search_data);
-            search.setCategory(category);
+            if (id.equals("2")) {
+                Assert.assertTrue(false);
+                getExtentTest().fail("Falla a proposito");
+            }
+            ((Search) getTestResultData()).setTestcase(id);
+            logger.debug(Thread.currentThread().getId() + " testCase = " + ((Search) getTestResultData()).getTestcase());
+            ((Search) getTestResultData()).setSearch_data(search_data);
+            logger.debug(Thread.currentThread().getId() + " search = " + ((Search) getTestResultData()).getSearch_data());
+            ((Search) getTestResultData()).setCategory(category);
+            logger.debug(Thread.currentThread().getId() + " category = " + ((Search) getTestResultData()).getCategory());
+            ((Search) getTestResultData()).setTestResultData();
         } catch (Throwable t) {
-            throw logger.throwing(t);
+            //throw logger.throwing(t);
         }
     }
 

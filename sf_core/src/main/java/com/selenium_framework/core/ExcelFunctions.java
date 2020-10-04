@@ -20,10 +20,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class ExcelFunctions {
     private static ExcelReadWrite excelReadWrite;
-    private Logger logger = LogManager.getLogger(ExcelFunctions.class);
+    private static Logger logger = LogManager.getLogger(ExcelFunctions.class);
 
     /**
      * Metodo que extrae todos los datos del archivo excel y los devuelve en un arreglo de objetos
@@ -69,5 +70,20 @@ public class ExcelFunctions {
         for (int i = 0; i < headers.length; i++) {
             excelReadWrite.addColumn(sheetName, headers[i]);
         }
+    }
+
+
+    public static void writeData(String filePath, String[] headers, ArrayList<String[]> testResultData) throws Throwable {
+        String sheetName = GetPropertyValues.getPropertyValue("config.properties", "resultFile_sheetName");
+        excelReadWrite = new ExcelReadWrite(filePath);
+        int x = 0;
+        for (String[] test : testResultData) {
+            logger.info(testResultData.get(x));
+            for (int i = 0; i < test.length; i++) {
+                logger.info(test[i]);
+            }
+            x++;
+        }
+
     }
 }

@@ -33,18 +33,19 @@ import org.openqa.selenium.opera.OperaDriver;
 import java.util.HashMap;
 
 public class TestManager {
-    private static String browser;
-    private static ExtentReports extentReport;
+    private static Object testResultData;
     private static TestManager instance = new TestManager();
     private final String CHROME = "CHROME";
     private final String FIREFOX = "FIREFOX";
     private final String OPERA = "OPERA";
     private final String EDGE = "EDGE";
+    private static String browser;
+    private static ExtentReports extentReport;
     private final String IEXPLORER = "IEXPLORER";
     /**
      * ThreadLocal que guarda en hilos el driver y el extentest que se utilizara en cada prueba
      */
-    ThreadLocal<HashMap<String, Object>> threadLocal = ThreadLocal.withInitial(() -> {
+    protected ThreadLocal<HashMap<String, Object>> threadLocal = ThreadLocal.withInitial(() -> {
         HashMap<String, Object> map = new HashMap<>();
         switch (browser.toUpperCase()) {
             case CHROME:
@@ -56,6 +57,7 @@ public class TestManager {
                 map.put("DRIVER", webDriver);
                 ExtentTest extentTest = extentReport.createTest("testName");
                 map.put("TEST", extentTest);
+                map.put("TEST_RESULT_DATA", testResultData);
                 return map;
             case FIREFOX:
                 WebDriverManager.firefoxdriver().setup();
@@ -83,6 +85,7 @@ public class TestManager {
         }
 
     });
+
     private Logger logger = LogManager.getLogger(TestManager.class);
 
     protected static TestManager getInstance() {
@@ -135,4 +138,14 @@ public class TestManager {
         ExtentTest extentTest = ((ExtentTest) threadLocal.get().get("TEST"));
         return extentTest;
     }
+
+    protected Object getTestResultData() {
+        Object testResultData = threadLocal.get().get("TEST_RESULT_DATA");
+        return testResultData;
+    }
+
+    protected void setTestResultData(Object testResultData) {
+        TestManager.testResultData = testResultData;
+    }
+
 }

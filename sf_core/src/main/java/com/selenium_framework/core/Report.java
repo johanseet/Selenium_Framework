@@ -30,6 +30,7 @@ import ru.yandex.qatools.ashot.shooting.ShootingStrategies;
 import javax.imageio.ImageIO;
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class Report {
@@ -77,5 +78,9 @@ public class Report {
 
     protected void createExcelFileResult(String[] headers) throws Throwable {
         ExcelFunctions.createExcel(OUTPUT_FOLDER + fs + GetPropertyValues.getPropertyValue("config.properties", "resultFile_name"), headers);
+    }
+
+    protected void writeExcelFileResult(String[] headers, ArrayList<String[]> testResultData) throws Throwable {
+        ExcelFunctions.writeData(OUTPUT_FOLDER + fs + GetPropertyValues.getPropertyValue("config.properties", "resultFile_name"), headers, testResultData);
     }
 }

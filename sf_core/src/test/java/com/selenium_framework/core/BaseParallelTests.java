@@ -25,6 +25,7 @@ import org.openqa.selenium.WebDriver;
 import org.testng.annotations.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class BaseParallelTests {
 
@@ -34,12 +35,21 @@ public class BaseParallelTests {
     public String testFile_path;
     public String testFile_sheet;
     public String[] headers;
+    public static Object testResultData;
     private WebDriver driver;
     private Object[][] testData;
     private Logger logger = LogManager.getLogger(BaseParallelTests.class);
     private String user_dir = System.getProperty("user.dir");
     private Report report = new Report();
+    private static ArrayList<String[]> listTestResultData = new ArrayList<String[]>();
 
+    protected Object getTestResultData() {
+        return TestManager.getInstance().getTestResultData();
+    }
+
+    protected void addTestResultData(String[] testResultData) {
+        listTestResultData.add(testResultData);
+    }
 
     /**
      * Método que devuelve el ExtentReport al listener
@@ -128,6 +138,7 @@ public class BaseParallelTests {
         TestManager driverManager = new TestManager();
         driverManager.setDriver(GetPropertyValues.getPropertyValue("config.properties", "driver"));
         driverManager.setExtentReport(extentReports);
+        driverManager.setTestResultData(testResultData);
         driver = TestManager.getInstance().getDriver();
         extentTest = TestManager.getInstance().getExtentTest();
     }
@@ -137,6 +148,7 @@ public class BaseParallelTests {
      */
     @AfterMethod
     public void afterMethod() {
+        logger.debug("trace");
         TestManager.getInstance().removeDriver();
     }
 
@@ -145,12 +157,15 @@ public class BaseParallelTests {
      */
     @AfterClass
     public void afterClass() {
+        logger.debug("trace");
     }
 
     /**
      * Se ejecutará antes de que se ejecute cualquier método de prueba que pertenezca a las clases dentro de la etiqueta <test>
      */
     @AfterTest
-    public void afterTest() {
+    public void afterTest() throws Throwable {
+        logger.debug("trace");
+        report.writeExcelFileResult(headers, listTestResultData);
     }
 }

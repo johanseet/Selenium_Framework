@@ -25,6 +25,7 @@ public class Search {
     private String search_data;
     private String category;
     private String state;
+    private String[] testResultData;
 
     public String getTestcase() {
         return testcase;
@@ -58,4 +59,17 @@ public class Search {
         this.state = state;
     }
 
+    public String[] getTestResultData() {
+        return testResultData;
+    }
+
+    public void setTestResultData() {
+        testResultData = new String[4];
+        testResultData[0] = getTestcase();
+        testResultData[1] = getSearch_data();
+        testResultData[2] = getCategory();
+        testResultData[3] = getState();
+
+        this.testResultData = testResultData;
+    }
 }

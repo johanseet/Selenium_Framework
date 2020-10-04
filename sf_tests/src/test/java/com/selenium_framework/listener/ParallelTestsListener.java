@@ -18,6 +18,7 @@ package com.selenium_framework.listener;
 
 import com.aventstack.extentreports.ExtentReports;
 import com.selenium_framework.core.BaseParallelTests;
+import com.selenium_framework.test_dto.Search;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.testng.ITestContext;
@@ -39,12 +40,18 @@ public class ParallelTestsListener extends BaseParallelTests implements ITestLis
 
     @Override
     public void onTestSuccess(ITestResult result) {
+        ((Search) getTestResultData()).setTestcase("PASS");
         getExtentTest().pass("marcando pass la prueba");
+        logger.debug("trace");
+        addTestResultData(((Search) getTestResultData()).getTestResultData());
     }
 
     @Override
     public void onTestFailure(ITestResult result) {
+        ((Search) getTestResultData()).setTestcase("FAIL");
         getExtentTest().fail("La prueba ha fallado, información sobre el error: " + result.getThrowable());
+        logger.debug("trace");
+        addTestResultData(((Search) getTestResultData()).getTestResultData());
     }
 
     @Override
@@ -62,7 +69,7 @@ public class ParallelTestsListener extends BaseParallelTests implements ITestLis
 
     @Override
     public void onFinish(ITestContext context) {
-        logger.trace("Finalizando el Reporte");
+        logger.debug("trace");
         extentReports.flush();
     }
 }
