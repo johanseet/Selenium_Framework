@@ -26,9 +26,9 @@ import java.util.logging.Formatter;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 
-class LogFormatter extends Formatter {
-    private static final DateFormat df = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss.SSS");
-    private static Logger logger = LogManager.getLogger(LogFormatter.class);
+public class LogFormatter extends Formatter {
+    private final DateFormat df = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss.SSS");
+    private Logger logger = LogManager.getLogger(LogFormatter.class);
 
     public String format(LogRecord record) {
         StringBuilder builder = new StringBuilder(1000);

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.selenium_framework.core;
+package com.selenium_framework.listener;
 
 import com.aventstack.extentreports.ExtentReports;
-import com.aventstack.extentreports.Status;
+import com.selenium_framework.core.BaseParallelTests;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.testng.ITestContext;
@@ -25,56 +25,44 @@ import org.testng.ITestListener;
 import org.testng.ITestResult;
 
 public class ParallelTestsListener extends BaseParallelTests implements ITestListener {
-    private static Logger logger = LogManager.getLogger(ParallelTestsListener.class);
-    //private static ThreadLocal<ExtentTest> threadTest = new ThreadLocal<ExtentTest>();
-    public ExtentReports extentReports;
+    private Logger logger = LogManager.getLogger(ParallelTestsListener.class);
+    private ExtentReports extentReports;
 
     @Override
     public void onStart(ITestContext context) {
-        logger.debug("THREAD: " + Thread.currentThread().getId());
     }
 
     @Override
     public void onTestStart(ITestResult result) {
         extentReports = getExtentReports();
-        logger.debug("THREAD: " + Thread.currentThread().getId() + "utilizando el extentReport = " + extentReports);
-        logger.debug("THREAD: " + Thread.currentThread().getId() + "utilizando el extenttest = " + getExtentTest());
-        //threadTest.set(extentTest);
     }
 
     @Override
     public void onTestSuccess(ITestResult result) {
-        getExtentTest().log(Status.PASS, "marcando pass el extentTest " + getExtentTest());
-        logger.debug("THREAD: " + Thread.currentThread().getId() + "marcando pass el extentTest " + getExtentTest());
-        //threadTest.get().log(Status.PASS,"prueba pass");
+        getExtentTest().pass("marcando pass la prueba");
     }
 
     @Override
     public void onTestFailure(ITestResult result) {
-        getExtentTest().fail("marcando fail el extentTest " + getExtentTest());
-        logger.debug("THREAD: " + Thread.currentThread().getId() + " marcando fail el extentTest " + getExtentTest());
-        //threadTest.get().fail(result.getThrowable());
-        //threadTest.get().addScreenCaptureFromPath(result.)
+        getExtentTest().fail("La prueba ha fallado, información sobre el error: " + result.getThrowable());
     }
 
     @Override
     public void onTestSkipped(ITestResult result) {
-        logger.debug("THREAD: " + Thread.currentThread().getId());
+        logger.trace("Omitiendo la prueba");
     }
 
     @Override
     public void onTestFailedButWithinSuccessPercentage(ITestResult result) {
-        logger.debug("THREAD: " + Thread.currentThread().getId());
     }
 
     @Override
     public void onTestFailedWithTimeout(ITestResult result) {
-        logger.debug("THREAD: " + Thread.currentThread().getId());
     }
 
     @Override
     public void onFinish(ITestContext context) {
-        logger.debug("THREAD: " + Thread.currentThread().getId() + " finalizando el extentreport = " + extentReports);
+        logger.trace("Finalizando el Reporte");
         extentReports.flush();
     }
 }

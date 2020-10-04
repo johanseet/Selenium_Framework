@@ -1,3 +1,4 @@
 .gradle/
 .idea/
 */build/
+sf_tests/extent-reports

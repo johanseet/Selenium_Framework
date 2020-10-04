@@ -17,19 +17,65 @@
 package com.selenium_framework.core;
 
 import com.aventstack.extentreports.ExtentReports;
+import com.aventstack.extentreports.MediaEntityBuilder;
+import com.aventstack.extentreports.model.Media;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
+import org.apache.commons.io.FileUtils;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
+import ru.yandex.qatools.ashot.AShot;
+import ru.yandex.qatools.ashot.shooting.ShootingStrategies;
+
+import javax.imageio.ImageIO;
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class Report {
+    private static final String currentTime = new SimpleDateFormat("yyyy/MM/dd_HH:mm:ss").format(new Date()).replace(":", ".").replace("/", "-");
     private static ExtentReports extentReports;
+    private static String fs = File.separator;
+    private static String OUTPUT_FOLDER;
 
-    public static ExtentReports generateReport() {
-        String path = System.getProperty("user.dir") + "\\reports\\index.html";
+    static {
+        try {
+            OUTPUT_FOLDER = System.getProperty("user.dir") + fs + "extent-reports" + fs + GetPropertyValues.getPropertyValue("config.properties", "report_name") + "_" + currentTime;
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
+    }
+
+    protected static Media takeScreenshot(WebDriver webDriver, String testId, String name, boolean isFullSize) throws Exception {
+        name += ".png";
+        String imgPath = "test_" + testId;
+        String imgFullPath = OUTPUT_FOLDER + fs + imgPath;
+
+        new File(imgFullPath).mkdirs();
+        File file = new File(imgFullPath + fs + name);
+        file.createNewFile();
+
+        if (isFullSize) {
+            ImageIO.write(new AShot().shootingStrategy(ShootingStrategies.viewportPasting(100)).takeScreenshot(webDriver).getImage(), "png", file);
+        } else {
+            FileUtils.copyFile(((TakesScreenshot) webDriver).getScreenshotAs(OutputType.FILE), file);
+        }
+
+        return MediaEntityBuilder.createScreenCaptureFromPath(imgFullPath + fs + name).build();
+    }
+
+    protected static ExtentReports generateReport() throws Throwable {
+        String path = OUTPUT_FOLDER + fs + "index.html";
         ExtentSparkReporter reporter = new ExtentSparkReporter(path);
-        reporter.config().setReportName("Nombre del reporte");
-        reporter.config().setDocumentTitle("Titulo del documento");
+        reporter.config().setReportName(GetPropertyValues.getPropertyValue("config.properties", "report_name"));
+        reporter.config().setDocumentTitle(GetPropertyValues.getPropertyValue("config.properties", "report_tabname"));
         extentReports = new ExtentReports();
         extentReports.attachReporter(reporter);
-        extentReports.setSystemInfo("Tester", "Johanseet Ramirez");
+        extentReports.setSystemInfo(GetPropertyValues.getPropertyValue("config.properties", "tester_position"), GetPropertyValues.getPropertyValue("config.properties", "tester_name"));
         return extentReports;
+    }
+
+    protected void createExcelFileResult(String[] headers) throws Throwable {
+        ExcelFunctions.createExcel(OUTPUT_FOLDER + fs + GetPropertyValues.getPropertyValue("config.properties", "resultFile_name"), headers);
     }
 }

@@ -22,8 +22,8 @@ import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 
 public class ExcelFunctions {
-    static Xls_Reader reader;
-    private static Logger logger = LogManager.getLogger(ExcelFunctions.class);
+    private static ExcelReadWrite excelReadWrite;
+    private Logger logger = LogManager.getLogger(ExcelFunctions.class);
 
     /**
      * Metodo que extrae todos los datos del archivo excel y los devuelve en un arreglo de objetos
@@ -33,10 +33,10 @@ public class ExcelFunctions {
      * @return
      * @throws IOException
      */
-    public static Object[][] getDataExcel(String filePath, String sheetName) throws IOException {
-        reader = new Xls_Reader(filePath);
-        int totalRows = reader.getRowCount(sheetName);
-        int totalColumns = reader.getColumnCount(sheetName);
+    protected static Object[][] getDataExcel(String filePath, String sheetName) throws IOException {
+        excelReadWrite = new ExcelReadWrite(filePath);
+        int totalRows = excelReadWrite.getRowCount(sheetName);
+        int totalColumns = excelReadWrite.getColumnCount(sheetName);
 
         Object[][] excel_data = new Object[totalRows - 1][];
 
@@ -47,11 +47,27 @@ public class ExcelFunctions {
             excel_data[rowCounter] = new Object[totalColumns];
             //Se recorre todas las columnas con datos
             for (int columnsNum = 0; columnsNum < totalColumns; columnsNum++) {
-                excel_data[rowCounter][columnCounter] = reader.getCellData(sheetName, columnsNum, rowNum);
+                excel_data[rowCounter][columnCounter] = excelReadWrite.getCellData(sheetName, columnsNum, rowNum);
                 columnCounter++;
             }
             rowCounter++;
         }
         return excel_data;
+    }
+
+    /**
+     * Método utilizado para crear un archivo excel
+     *
+     * @param filePath Ruta del archivo a crear
+     * @param headers  Nombres de las columnas del excel
+     * @throws Exception
+     */
+    protected static void createExcel(String filePath, String[] headers) throws Throwable {
+        String sheetName = GetPropertyValues.getPropertyValue("config.properties", "resultFile_sheetName");
+        excelReadWrite = new ExcelReadWrite(filePath, sheetName);
+
+        for (int i = 0; i < headers.length; i++) {
+            excelReadWrite.addColumn(sheetName, headers[i]);
+        }
     }
 }

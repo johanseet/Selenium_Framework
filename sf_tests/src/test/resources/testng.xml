@@ -15,13 +15,13 @@
   -->
 
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
-<suite name="ParallelExecutionDataProvider" preserve-order="true" parallel="methods" data-provider-thread-count="3">
+<suite name="ParallelExecutionDataProvider" preserve-order="true" parallel="methods" data-provider-thread-count="1">
     <listeners>
-        <listener class-name="com.selenium_framework.core.ParallelTestsListener"></listener>
+        <listener class-name="com.selenium_framework.listener.ParallelTestsListener"></listener>
     </listeners>
     <test name="ExecuteDataProviderParallelly">
         <classes>
-            <class name="com.selenium_framework.tests.ParallelTestsNG_Parallel"></class>
+            <class name="com.selenium_framework.tests.ParallelTestsNG"></class>
         </classes>
     </test>
 </suite>

@@ -19,55 +19,43 @@ package com.selenium_framework.test_dto;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class Search_dto {
-    private Logger logger = LogManager.getLogger(Search_dto.class);
+public class Search {
+    public Logger logger = LogManager.getLogger(Search.class);
     private String testcase;
     private String search_data;
     private String category;
+    private String state;
 
-    public Search_dto(final Object[] oRow) throws Exception {
-        logger.info("Iniciando la encapsulacion de los datos");
-        setTestCase(oRow[0]);
-        setSearchdata(oRow[1]);
-        setCategory(oRow[2]);
-    }
-
-    public String getTestCase() {
+    public String getTestcase() {
         return testcase;
     }
 
-    /**
-     * Set TestCase value
-     */
-
-    public void setTestCase(Object testcase) {
-        this.testcase = testcase.toString().trim();
-    }
-
-
-    /**
-     * Set search data
-     */
-
-    public void setSearchdata(Object search_data) {
-        this.search_data = search_data.toString().trim();
+    public void setTestcase(String testcase) {
+        this.testcase = testcase;
     }
 
     public String getSearch_data() {
         return search_data;
     }
 
+    public void setSearch_data(String search_data) {
+        this.search_data = search_data;
+    }
+
     public String getCategory() {
         return category;
     }
 
-    /**
-     * Set Category
-     */
+    public void setCategory(String category) {
+        this.category = category;
+    }
 
-    public void setCategory(Object category) {
-        this.category = category.toString().trim();
+    public String getState() {
+        return state;
+    }
 
+    public void setState(String state) {
+        this.state = state;
     }
 
 }

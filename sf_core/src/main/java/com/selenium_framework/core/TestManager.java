@@ -33,15 +33,14 @@ import org.openqa.selenium.opera.OperaDriver;
 import java.util.HashMap;
 
 public class TestManager {
-    private static final String CHROME = "CHROME";
-    private static final String FIREFOX = "FIREFOX";
-    private static final String OPERA = "OPERA";
-    private static final String EDGE = "EDGE";
-    private static final String IEXPLORER = "IEXPLORER";
-    private static Logger logger = LogManager.getLogger(TestManager.class);
     private static String browser;
     private static ExtentReports extentReport;
     private static TestManager instance = new TestManager();
+    private final String CHROME = "CHROME";
+    private final String FIREFOX = "FIREFOX";
+    private final String OPERA = "OPERA";
+    private final String EDGE = "EDGE";
+    private final String IEXPLORER = "IEXPLORER";
     /**
      * ThreadLocal que guarda en hilos el driver y el extentest que se utilizara en cada prueba
      */
@@ -84,8 +83,9 @@ public class TestManager {
         }
 
     });
+    private Logger logger = LogManager.getLogger(TestManager.class);
 
-    public static TestManager getInstance() {
+    protected static TestManager getInstance() {
         return instance;
     }
 
@@ -94,7 +94,7 @@ public class TestManager {
      *
      * @return Devuelve el driver
      */
-    public WebDriver getDriver() {
+    protected WebDriver getDriver() {
         WebDriver webDriver = (WebDriver) threadLocal.get().get("DRIVER");
         return webDriver;
     }
@@ -104,14 +104,14 @@ public class TestManager {
      *
      * @param browser "CHROME", "FIREFOX", "OPERA", "EDGE", "IEXPLORER"
      */
-    public void setDriver(String browser) {
+    protected void setDriver(String browser) {
         TestManager.browser = browser;
     }
 
     /**
      * Método que cierra el driver y elimina el hilo de la prueba, este método se debe llamar cuando la prueba finalice
      */
-    public void removeDriver() {
+    protected void removeDriver() {
         WebDriver webDriver = ((WebDriver) threadLocal.get().get("DRIVER"));
         webDriver.quit();
         threadLocal.remove();
@@ -122,7 +122,7 @@ public class TestManager {
      *
      * @param extentReport
      */
-    public void setExtentReport(ExtentReports extentReport) {
+    protected void setExtentReport(ExtentReports extentReport) {
         TestManager.extentReport = extentReport;
     }
 
@@ -131,7 +131,7 @@ public class TestManager {
      *
      * @return
      */
-    public ExtentTest getExtentTest() {
+    protected ExtentTest getExtentTest() {
         ExtentTest extentTest = ((ExtentTest) threadLocal.get().get("TEST"));
         return extentTest;
     }

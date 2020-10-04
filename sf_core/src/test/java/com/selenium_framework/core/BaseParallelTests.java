@@ -18,6 +18,7 @@ package com.selenium_framework.core;
 
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.model.Media;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
@@ -27,24 +28,36 @@ import java.io.IOException;
 
 public class BaseParallelTests {
 
-    public static WebDriver driver = null;
-    public static Object[][] testData;
-    public static ExtentReports extentReports;
-    public static ExtentTest extentTest;
-    private static Logger logger = LogManager.getLogger(BaseParallelTests.class);
+    private static ExtentReports extentReports;
+    private static ExtentTest extentTest;
     public String propertyFile;
     public String testFile_path;
     public String testFile_sheet;
+    public String[] headers;
+    private WebDriver driver;
+    private Object[][] testData;
+    private Logger logger = LogManager.getLogger(BaseParallelTests.class);
+    private String user_dir = System.getProperty("user.dir");
+    private Report report = new Report();
 
-    public static ExtentReports getExtentReports() {
-        logger.trace("THREAD: " + Thread.currentThread().getId() + " extentreports = " + extentReports);
+
+    /**
+     * Método que devuelve el ExtentReport al listener
+     *
+     * @return
+     */
+    protected ExtentReports getExtentReports() {
         return extentReports;
     }
 
-    public static ExtentTest getExtentTest() {
-        //return ExtentTestManager.getInstance().getExtentTest();
+
+    /**
+     * Método que devuelve el Extentest del hilo actual al método @Test
+     *
+     * @return
+     */
+    protected ExtentTest getExtentTest() {
         ExtentTest extentTest = TestManager.getInstance().getExtentTest();
-        logger.trace("THREAD: " + Thread.currentThread().getId() + " testmanager getestenttest = " + extentTest);
         return extentTest;
     }
 
@@ -53,11 +66,13 @@ public class BaseParallelTests {
      *
      * @return driver
      */
-    public WebDriver getDriver() {
-        //return DriverManager.getInstance().getDriver();
+    protected WebDriver getDriver() {
         WebDriver webDriver = TestManager.getInstance().getDriver();
-        logger.trace("THREAD: " + Thread.currentThread().getId() + " testmanager getdriver = " + webDriver);
         return webDriver;
+    }
+
+    protected Media takeScreenshot(String id, String name, Boolean isFullSize) throws Exception {
+        return Report.takeScreenshot(getDriver(), id, name, false);
     }
 
     /**
@@ -65,8 +80,7 @@ public class BaseParallelTests {
      *
      * @return testData
      */
-    public Object[][] getData() {
-        logger.trace("THREAD: " + Thread.currentThread().getId());
+    protected Object[][] getData() {
         return testData;
     }
 
@@ -80,8 +94,7 @@ public class BaseParallelTests {
      * @throws IOException
      */
     @DataProvider(name = "data-provider", parallel = true)
-    public Object[][] data() throws IOException {
-        logger.trace("THREAD: " + Thread.currentThread().getId());
+    public Object[][] data() {
         return getData();
     }
 
@@ -91,42 +104,32 @@ public class BaseParallelTests {
      * @throws IOException
      */
     @BeforeTest
-    public void beforeTest() throws IOException {
-        String file_path = GetPropertyValues.getPropertyValue(propertyFile, testFile_path);
+    public void beforeTest() throws Throwable {
+        String file_path = user_dir + GetPropertyValues.getPropertyValue(propertyFile, testFile_path);
         String file_sheet = GetPropertyValues.getPropertyValue(propertyFile, testFile_sheet);
         testData = ExcelFunctions.getDataExcel(file_path, file_sheet);
         extentReports = Report.generateReport();
-        logger.trace("THREAD: " + Thread.currentThread().getId() + " extentReports = " + extentReports);
+        report.createExcelFileResult(headers);
     }
 
     /**
      * Se ejecutará solo una vez después de que se hayan ejecutado todos los métodos de prueba de la clase actual
      */
     @BeforeClass
-    public void beforeClass() {
-        logger.trace("THREAD: " + Thread.currentThread().getId());
+    public void beforeClass() throws Throwable {
+
     }
 
     /**
      * Se ejecutará antes de cada método de prueba
      */
     @BeforeMethod
-    public void beforeMethod() {
-/*        DriverManager driverManager = new DriverManager();
-        driverManager.setDriver("CHROME");
-        driver = driverManager.getInstance().getDriver();
-        ExtentTestManager extentTestManager = new ExtentTestManager();
-        extentTestManager.setExtentReport(extentReports);
-        extentTest = extentTestManager.getInstance().getExtentTest();
-        logger.warn("se creo el extentTest "+ extentTest);
-        */
+    public void beforeMethod() throws Throwable {
         TestManager driverManager = new TestManager();
-        driverManager.setDriver("CHROME");
+        driverManager.setDriver(GetPropertyValues.getPropertyValue("config.properties", "driver"));
         driverManager.setExtentReport(extentReports);
         driver = TestManager.getInstance().getDriver();
-        logger.trace("THREAD: " + Thread.currentThread().getId() + " driver = " + driver);
         extentTest = TestManager.getInstance().getExtentTest();
-        logger.trace("THREAD: " + Thread.currentThread().getId() + " extenTest = " + extentTest);
     }
 
     /**
@@ -134,8 +137,6 @@ public class BaseParallelTests {
      */
     @AfterMethod
     public void afterMethod() {
-        logger.trace("THREAD: " + Thread.currentThread().getId());
-        //DriverManager.getInstance().removeDriver();
         TestManager.getInstance().removeDriver();
     }
 
@@ -144,7 +145,6 @@ public class BaseParallelTests {
      */
     @AfterClass
     public void afterClass() {
-        logger.trace("THREAD: " + Thread.currentThread().getId());
     }
 
     /**
@@ -152,6 +152,5 @@ public class BaseParallelTests {
      */
     @AfterTest
     public void afterTest() {
-        logger.trace("THREAD: " + Thread.currentThread().getId());
     }
 }

@@ -26,48 +26,41 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.Select;
 
 public class Ebay_Page_Home extends BasePageObjects {
-    private static Logger logger = LogManager.getLogger(Ebay_Page_Home.class);
-
     @FindBy(xpath = "//*[@id=\"gh-ac\"]")
-    WebElement txt_Search;
-
+    private WebElement txt_Search;
     @FindBy(xpath = "//*[@id=\"gh-cat\"]\n")
-    WebElement dpbox_Categories;
-
+    private WebElement dpbox_Categories;
     @FindBy(xpath = "//*[@id=\"gh-btn\"]\n")
-    WebElement btn_search;
+    private WebElement btn_search;
+    private String id;
+    private Logger logger = LogManager.getLogger(Ebay_Page_Home.class);
 
-    public Ebay_Page_Home(WebDriver driver) {
+    public Ebay_Page_Home(WebDriver driver, String id) {
         super(driver);
+        this.id = id;
     }
 
-    public void goToEbayHomePage() throws Exception {
+    public void goToEbayHomePage() throws Throwable {
         String url_ebayhome = null;
-        try {
-            url_ebayhome = GetPropertyValues.getPropertyValue("config.properties", "url_ebayhome");
-            driver.navigate().to(url_ebayhome);
-        } catch (Exception e) {
-            logger.error("No se pudo redireccionar a la pagina " + url_ebayhome, e);
-            throw e;
-        }
+        url_ebayhome = GetPropertyValues.getPropertyValue("config.properties", "url_ebayhome");
+        getDriver().navigate().to(url_ebayhome);
+        getExtentTest().pass("Se redireccionó correctamente a la página de ebay.", takeScreenshot(id, "ebayHome", false));
     }
 
     public void writeInTxtSearch(String search) throws Exception {
         txt_Search.clear();
         txt_Search.sendKeys(search);
+        getExtentTest().pass("Se ingresa los datos correctamente.", takeScreenshot(id, "ebayTxtSearch", false));
     }
 
     public void selectCategory(String category) throws Exception {
-        try {
-            Select slc_Category = new Select(dpbox_Categories);
-            slc_Category.selectByVisibleText(category);
-        } catch (Exception e) {
-            throw e;
-        }
-
+        Select slc_Category = new Select(dpbox_Categories);
+        slc_Category.selectByVisibleText(category);
+        getExtentTest().pass("Se selecciona la categoria.", takeScreenshot(id, "ebayCategory", false));
     }
 
     public void clickButtonSearch() throws Exception {
         btn_search.click();
+        getExtentTest().pass("Se realiza la búsqueda.", takeScreenshot(id, "ebaySearch", false));
     }
 }

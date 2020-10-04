@@ -35,7 +35,7 @@ public class GetPropertyValues {
      * @return Valor de la propiedad
      * @throws IOException
      */
-    public static String getPropertyValue(String propertyFile, String propertyName) throws IOException {
+    public static String getPropertyValue(String propertyFile, String propertyName) throws Throwable {
         String property_value = null;
         InputStream inputStream = null;
 
@@ -52,8 +52,12 @@ public class GetPropertyValues {
 
             property_value = prop.getProperty(propertyName);
 
-        } catch (Exception e) {
-            logger.debug("Exception: " + e);
+            if (property_value == null) {
+                throw new NullPointerException("El archivo de propiedades '" + propertyFile + "' no tiene la propiedad: " + propertyName);
+            }
+
+        } catch (Throwable t) {
+            throw logger.throwing(t);
         } finally {
             inputStream.close();
         }
