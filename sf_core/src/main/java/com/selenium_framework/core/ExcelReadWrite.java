@@ -212,7 +212,7 @@ public class ExcelReadWrite {
             xssfWorkbook = new XSSFWorkbook(fileInputStream);
 
             if (rowNum <= 0)
-                return false;
+                rowNum = 1;
 
             int index = xssfWorkbook.getSheetIndex(sheetName);
             int colNum = -1;
@@ -223,16 +223,17 @@ public class ExcelReadWrite {
 
             xssfRow = xssfSheet.getRow(0);
             for (int i = 0; i < xssfRow.getLastCellNum(); i++) {
-                if (xssfRow.getCell(i).getStringCellValue().trim().equals(colName))
+                if (xssfRow.getCell(i).getStringCellValue().equals(colName)) {
                     colNum = i;
+                }
             }
             if (colNum == -1)
                 return false;
 
             xssfSheet.autoSizeColumn(colNum);
-            xssfRow = xssfSheet.getRow(rowNum - 1);
+            xssfRow = xssfSheet.getRow(rowNum);
             if (xssfRow == null)
-                xssfRow = xssfSheet.createRow(rowNum - 1);
+                xssfRow = xssfSheet.createRow(rowNum);
 
             xssfCell = xssfRow.getCell(colNum);
             if (xssfCell == null)

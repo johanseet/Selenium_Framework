@@ -16,16 +16,11 @@
 
 package com.selenium_framework.core;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 
 public class BasePageObjects extends BaseParallelTests {
-    private final int TIMEOUT = 5;
-    private final int POLLING = 100;
-    private Logger logger = LogManager.getLogger(BasePageObjects.class);
 
     public BasePageObjects(WebDriver driver) {
         PageFactory.initElements(new AjaxElementLocatorFactory(driver, 15), this);

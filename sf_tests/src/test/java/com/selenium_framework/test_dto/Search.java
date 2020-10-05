@@ -16,32 +16,33 @@
 
 package com.selenium_framework.test_dto;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 public class Search {
-    public Logger logger = LogManager.getLogger(Search.class);
-    private String testcase;
-    private String search_data;
+    private String idTestCase;
+    private String searchData;
     private String category;
     private String state;
     private String[] testResultData;
 
-    public String getTestcase() {
-        return testcase;
+    public Search(String[] data) {
+        setIdTestCase(data[0]);
+        setSearchData(data[1]);
+        setCategory(data[2]);
     }
 
-    public void setTestcase(String testcase) {
-        logger.error("seteando el id " + testcase + " al id actual " + this.testcase);
-        this.testcase = testcase;
+    public String getIdTestCase() {
+        return idTestCase;
     }
 
-    public String getSearch_data() {
-        return search_data;
+    public void setIdTestCase(String idTestCase) {
+        this.idTestCase = idTestCase;
     }
 
-    public void setSearch_data(String search_data) {
-        this.search_data = search_data;
+    public String getSearchData() {
+        return searchData;
+    }
+
+    public void setSearchData(String searchData) {
+        this.searchData = searchData;
     }
 
     public String getCategory() {
@@ -66,8 +67,8 @@ public class Search {
 
     public void setTestResultData() {
         testResultData = new String[4];
-        testResultData[0] = getTestcase();
-        testResultData[1] = getSearch_data();
+        testResultData[0] = getIdTestCase();
+        testResultData[1] = getSearchData();
         testResultData[2] = getCategory();
         testResultData[3] = getState();
     }

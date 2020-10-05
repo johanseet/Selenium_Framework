@@ -20,7 +20,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
@@ -33,11 +32,10 @@ public class GetPropertyValues {
      * @param propertyFile Nombre del archivo de propiedades
      * @param propertyName Nombre de la propiedad
      * @return Valor de la propiedad
-     * @throws IOException
      */
     public static String getPropertyValue(String propertyFile, String propertyName) throws Throwable {
-        String property_value = null;
-        InputStream inputStream = null;
+        String property_value;
+        InputStream inputStream;
 
         try {
             Properties prop = new Properties();
@@ -55,12 +53,10 @@ public class GetPropertyValues {
             if (property_value == null) {
                 throw new NullPointerException("El archivo de propiedades '" + propertyFile + "' no tiene la propiedad: " + propertyName);
             }
-
+            inputStream.close();
+            return property_value;
         } catch (Throwable t) {
             throw logger.throwing(t);
-        } finally {
-            inputStream.close();
         }
-        return property_value;
     }
 }

@@ -35,7 +35,6 @@ import java.util.Date;
 
 public class Report {
     private static final String currentTime = new SimpleDateFormat("yyyy/MM/dd_HH:mm:ss").format(new Date()).replace(":", ".").replace("/", "-");
-    private static ExtentReports extentReports;
     private static String fs = File.separator;
     private static String OUTPUT_FOLDER;
 
@@ -47,6 +46,14 @@ public class Report {
         }
     }
 
+    /**
+     * Método que toma captura de pantalla
+     *
+     * @param webDriver  driver donde se toma la captura de pantalla
+     * @param testId     Id de la prueba
+     * @param name       Nombre de la captura
+     * @param isFullSize Indica true si se toma captura a la página completa o false si no.
+     */
     protected static Media takeScreenshot(WebDriver webDriver, String testId, String name, boolean isFullSize) throws Exception {
         name += ".png";
         String imgPath = "test_" + testId;
@@ -65,22 +72,39 @@ public class Report {
         return MediaEntityBuilder.createScreenCaptureFromPath(imgFullPath + fs + name).build();
     }
 
+    /**
+     * Método que genera el ExtentReport a utilizar en las pruebas
+     *
+     * @return Instancia del ExtentReport
+     */
     protected static ExtentReports generateReport() throws Throwable {
         String path = OUTPUT_FOLDER + fs + "index.html";
         ExtentSparkReporter reporter = new ExtentSparkReporter(path);
         reporter.config().setReportName(GetPropertyValues.getPropertyValue("config.properties", "report_name"));
         reporter.config().setDocumentTitle(GetPropertyValues.getPropertyValue("config.properties", "report_tabname"));
-        extentReports = new ExtentReports();
+        ExtentReports extentReports = new ExtentReports();
         extentReports.attachReporter(reporter);
         extentReports.setSystemInfo(GetPropertyValues.getPropertyValue("config.properties", "tester_position"), GetPropertyValues.getPropertyValue("config.properties", "tester_name"));
         return extentReports;
     }
 
+    /**
+     * Método que genera el excel del resultado de las pruebas
+     *
+     * @param headers Encabezados de las columnas
+     */
     protected void createExcelFileResult(String[] headers) throws Throwable {
         ExcelFunctions.createExcel(OUTPUT_FOLDER + fs + GetPropertyValues.getPropertyValue("config.properties", "resultFile_name"), headers);
     }
 
+    /**
+     * Método que escribe todos los resultados de las pruebas en el excel de resultados
+     *
+     * @param headers        Encabezados de los columnas
+     * @param testResultData Lista de todos los datos de las pruebas
+     * @throws Throwable
+     */
     protected void writeExcelFileResult(String[] headers, ArrayList<String[]> testResultData) throws Throwable {
-        ExcelFunctions.writeData(OUTPUT_FOLDER + fs + GetPropertyValues.getPropertyValue("config.properties", "resultFile_name"), headers, testResultData);
+        ExcelFunctions.writeTestResultData(OUTPUT_FOLDER + fs + GetPropertyValues.getPropertyValue("config.properties", "resultFile_name"), headers, testResultData);
     }
 }

@@ -24,37 +24,44 @@ import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.testng.annotations.*;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class BaseParallelTests {
 
     private static ExtentReports extentReports;
-    private static ExtentTest extentTest;
+    private static ArrayList<String[]> listTestResultData = new ArrayList<>();
     public String propertyFile;
     public String testFile_path;
     public String testFile_sheet;
     public String[] headers;
-    public static Object testResultData;
-    private WebDriver driver;
     private Object[][] testData;
     private Logger logger = LogManager.getLogger(BaseParallelTests.class);
     private String user_dir = System.getProperty("user.dir");
     private Report report = new Report();
-    private static ArrayList<String[]> listTestResultData = new ArrayList<String[]>();
 
-    protected Object getTestResultData() {
-        return TestManager.getInstance().getTestResultData();
+    /**
+     * Método que devuelve el objeto deseado del ThreadLocal
+     */
+    protected Object getObjectFromTestManager(String objectName) {
+        return TestManager.getInstance().getObjectFromTestManager(objectName);
     }
 
+    /**
+     * Método que agrega al ThreadLocal un objeto deseado.
+     */
+    protected void setObjectFromTestManager(Object object, String objectName) {
+        TestManager.getInstance().setObjectFromTestManager(object, objectName);
+    }
+
+    /**
+     * Método que agrega los datos finales de cada prueba ejecutada a la lista de resultados
+     */
     protected void addTestResultData(String[] testResultData) {
         listTestResultData.add(testResultData);
     }
 
     /**
-     * Método que devuelve el ExtentReport al listener
-     *
-     * @return
+     * Método que devuelve el ExtentReport al listener, el ExtentReport se utilizara durante toda la prueba
      */
     protected ExtentReports getExtentReports() {
         return extentReports;
@@ -62,56 +69,45 @@ public class BaseParallelTests {
 
 
     /**
-     * Método que devuelve el Extentest del hilo actual al método @Test
-     *
-     * @return
+     * Método que devuelve el Extentest del hilo actual al método @Test, el ExtenTest es donde se agregan
+     * los registros de los pasos (fail, pass), capturas de pantalla, etc.
      */
     protected ExtentTest getExtentTest() {
-        ExtentTest extentTest = TestManager.getInstance().getExtentTest();
-        return extentTest;
+        return TestManager.getInstance().getExtentTest();
     }
 
     /**
      * Método que devuelve el driver
-     *
-     * @return driver
      */
     protected WebDriver getDriver() {
-        WebDriver webDriver = TestManager.getInstance().getDriver();
-        return webDriver;
+        return TestManager.getInstance().getDriver();
     }
 
+    /**
+     * Método que toma captura de pantalla
+     */
     protected Media takeScreenshot(String id, String name, Boolean isFullSize) throws Exception {
-        return Report.takeScreenshot(getDriver(), id, name, false);
+        return Report.takeScreenshot(getDriver(), id, name, isFullSize);
     }
 
     /**
      * Método que devuelve los datos del excel en una matriz de objetos.
-     *
-     * @return testData
      */
     protected Object[][] getData() {
         return testData;
     }
 
     /**
-     * Proveedor con la matriz de objetos.
-     * Devuelve un Objeto[][], donde a cada Objeto[] se le asigna la lista de parámetros del método de prueba.
-     * El método @Test que quiere recibir datos de este DataProvider debe colocar el nombre DataProvider igual
-     * al nombre de esta anotación
-     *
-     * @return
-     * @throws IOException
+     * El proveedor devuelve una mstriz de Objeto[x][y], donde a cada Objeto[y] se le asigna la lista de parámetros del método de prueba.
+     * Se debe colocar el nombre del DataProvider en el método @Test para poder recibir los datos
      */
-    @DataProvider(name = "data-provider", parallel = true)
-    public Object[][] data() {
+    @DataProvider(name = "dataProvider", parallel = true)
+    public Object[][] dataProvider() {
         return getData();
     }
 
     /**
      * Se ejecutará antes de que se ejecute cualquier método de prueba que pertenezca a las clases dentro de la etiqueta <test>
-     *
-     * @throws IOException
      */
     @BeforeTest
     public void beforeTest() throws Throwable {
@@ -126,7 +122,7 @@ public class BaseParallelTests {
      * Se ejecutará solo una vez después de que se hayan ejecutado todos los métodos de prueba de la clase actual
      */
     @BeforeClass
-    public void beforeClass() throws Throwable {
+    public void beforeClass() {
 
     }
 
@@ -138,9 +134,8 @@ public class BaseParallelTests {
         TestManager testManager = new TestManager();
         testManager.setDriver(GetPropertyValues.getPropertyValue("config.properties", "driver"));
         testManager.setExtentReport(extentReports);
-        testManager.setTestResultData(testResultData);
-        driver = TestManager.getInstance().getDriver();
-        extentTest = TestManager.getInstance().getExtentTest();
+        TestManager.getInstance().getDriver();
+        TestManager.getInstance().getExtentTest();
     }
 
     /**

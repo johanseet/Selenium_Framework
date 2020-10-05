@@ -18,8 +18,6 @@ package com.selenium_framework.page_objects;
 
 import com.selenium_framework.core.BasePageObjects;
 import com.selenium_framework.core.GetPropertyValues;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -27,13 +25,12 @@ import org.openqa.selenium.support.ui.Select;
 
 public class Ebay_Page_Home extends BasePageObjects {
     @FindBy(xpath = "//*[@id=\"gh-ac\"]")
-    private WebElement txt_Search;
+    WebElement txt_Search;
     @FindBy(xpath = "//*[@id=\"gh-cat\"]\n")
-    private WebElement dpbox_Categories;
+    WebElement dpbox_Categories;
     @FindBy(xpath = "//*[@id=\"gh-btn\"]\n")
-    private WebElement btn_search;
+    WebElement btn_search;
     private String id;
-    private Logger logger = LogManager.getLogger(Ebay_Page_Home.class);
 
     public Ebay_Page_Home(WebDriver driver, String id) {
         super(driver);
@@ -41,10 +38,10 @@ public class Ebay_Page_Home extends BasePageObjects {
     }
 
     public void goToEbayHomePage() throws Throwable {
-        String url_ebayhome = null;
+        String url_ebayhome;
         url_ebayhome = GetPropertyValues.getPropertyValue("config.properties", "url_ebayhome");
         getDriver().navigate().to(url_ebayhome);
-        getExtentTest().pass("Se redireccionó correctamente a la página de ebay.", takeScreenshot(id, "ebayHome", false));
+        getExtentTest().pass("Se redireccionó correctamente a la página de ebay.", takeScreenshot(id, "ebayHome", true));
     }
 
     public void writeInTxtSearch(String search) throws Exception {

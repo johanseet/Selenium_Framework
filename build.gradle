@@ -1,6 +1,6 @@
 allprojects {
     group = 'Johanseet_projects'
-    version = '0.3'
+    version = '0.4'
 
 }
 

@@ -19,7 +19,6 @@ package com.selenium_framework.core;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class ExcelFunctions {
@@ -31,10 +30,9 @@ public class ExcelFunctions {
      *
      * @param filePath  Ruta del archivo excel
      * @param sheetName Nombre de la hoja de excel
-     * @return
-     * @throws IOException
+     * @return todos los datos del excel
      */
-    protected static Object[][] getDataExcel(String filePath, String sheetName) throws IOException {
+    protected static Object[][] getDataExcel(String filePath, String sheetName) {
         excelReadWrite = new ExcelReadWrite(filePath);
         int totalRows = excelReadWrite.getRowCount(sheetName);
         int totalColumns = excelReadWrite.getColumnCount(sheetName);
@@ -61,26 +59,30 @@ public class ExcelFunctions {
      *
      * @param filePath Ruta del archivo a crear
      * @param headers  Nombres de las columnas del excel
-     * @throws Exception
      */
     protected static void createExcel(String filePath, String[] headers) throws Throwable {
         String sheetName = GetPropertyValues.getPropertyValue("config.properties", "resultFile_sheetName");
         excelReadWrite = new ExcelReadWrite(filePath, sheetName);
 
-        for (int i = 0; i < headers.length; i++) {
-            excelReadWrite.addColumn(sheetName, headers[i]);
+        for (String header : headers) {
+            excelReadWrite.addColumn(sheetName, header);
         }
     }
 
-
-    public static void writeData(String filePath, String[] headers, ArrayList<String[]> testResultData) throws Throwable {
+    /**
+     * Métddo que escribe los resultados de las pruebas en el el excel de resultados
+     *
+     * @param filePath       ruta al excel donde se escriben los resultados
+     * @param headers        Encabezados de las columnas
+     * @param testResultData Datos de los resultados de las pruebas
+     */
+    public static void writeTestResultData(String filePath, String[] headers, ArrayList<String[]> testResultData) throws Throwable {
         String sheetName = GetPropertyValues.getPropertyValue("config.properties", "resultFile_sheetName");
         excelReadWrite = new ExcelReadWrite(filePath);
         int x = 0;
         for (String[] test : testResultData) {
-            logger.info(testResultData.get(x));
             for (int i = 0; i < test.length; i++) {
-                logger.info(test[i]);
+                excelReadWrite.setCellData(sheetName, headers[i], x + 1, test[i]);
             }
             x++;
         }

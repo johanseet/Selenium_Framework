@@ -26,6 +26,7 @@ import org.testng.ITestListener;
 import org.testng.ITestResult;
 
 public class ParallelTestsListener extends BaseParallelTests implements ITestListener {
+    private final String testResultData = "TEST_RESULT_DATA";
     private Logger logger = LogManager.getLogger(ParallelTestsListener.class);
     private ExtentReports extentReports;
     private Search search;
@@ -37,20 +38,23 @@ public class ParallelTestsListener extends BaseParallelTests implements ITestLis
     @Override
     public void onTestStart(ITestResult result) {
         extentReports = getExtentReports();
-        search = (Search) getTestResultData();
     }
 
     @Override
     public void onTestSuccess(ITestResult result) {
-        search.setState("PASS");
+        logger.info("La prueba a finalizado con estado: " + getExtentTest().getStatus().toString());
+        search = ((Search) getObjectFromTestManager(testResultData));
+        search.setState(getExtentTest().getStatus().toString());
         search.setTestResultData();
         addTestResultData(search.getTestResultData());
     }
 
     @Override
     public void onTestFailure(ITestResult result) {
+        logger.info("La prueba a fallado y no se logro completar. " + getExtentTest().getStatus().toString());
         getExtentTest().fail("La prueba ha fallado, información sobre el error: " + result.getThrowable());
-        search.setState("PASS");
+        search = ((Search) getObjectFromTestManager(testResultData));
+        search.setState(getExtentTest().getStatus().toString());
         search.setTestResultData();
         addTestResultData(search.getTestResultData());
     }
@@ -62,7 +66,7 @@ public class ParallelTestsListener extends BaseParallelTests implements ITestLis
 
     @Override
     public void onTestFailedButWithinSuccessPercentage(ITestResult result) {
-        logger.debug(Thread.currentThread().getId() + "***********************************");
+        logger.trace(Thread.currentThread().getId() + "***********************************");
     }
 
     @Override
